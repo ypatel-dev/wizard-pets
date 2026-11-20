@@ -6,7 +6,7 @@ app.whenReady().then(() => {
 
   const win = new BrowserWindow({ 
     x, y, width, height, // cover the whole screen
-    transperent: true, // see through bg
+    transparent: true, // see through bg
     frame: false, // no title bar or borders
     hasShadow: false,
     alwaysOnTop: true, // floay above the other windows
