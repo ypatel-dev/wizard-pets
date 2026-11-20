@@ -1,6 +1,7 @@
 {
   "name": "wizard-pets-learn",
   "version": "1.0.0",
+  "description": " Mini Harry and Draco desktop companions",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -8,7 +9,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "electron": "^41.7.1"
   }

@@ -2,7 +2,7 @@
 const { app, BrowserWindow, screen } = require('electron');
 
 app.whenReady().then(() => {
-  const {x, y, width, height} = screen.getPrimaryDisplay().workArea;
+  const { x, y, width, height } = screen.getPrimaryDisplay().bounds;
 
   const win = new BrowserWindow({ 
     x, y, width, height, // cover the whole screen
@@ -11,7 +11,7 @@ app.whenReady().then(() => {
     hasShadow: false,
     alwaysOnTop: true, // floay above the other windows
     skipTaskbar: true, // no Dock/taskbar entry
-    reseizable: false,
+    resizable: false,
     focusable: false // dont steal keyboard focus
    });
   win.setAlwaysOnTop(true, 'screen-saver');
@@ -19,5 +19,5 @@ app.whenReady().then(() => {
   win.setIgnoreMouseEvents(true, { forward: true }); // clicks pass through
   win.loadFile('index.html');
 
-  setTimeout(() => app.quit, 3000);
+  setTimeout(() => app.quit(), 3000);
 });
