@@ -16,41 +16,81 @@
       canvas.width = innerWidth;
       canvas.height = innerHeight;
 
-      const S = 4;
-      const W = 16, H = 18;
+      const S = 4;                       // one grid "pixel" on screen
+      const W = 16, H = 18;              // sprite grid size
+      const y = canvas.height - H * S;   // standing on the bottom edge
 
-      const x = 100;
-      const y = canvas.height - H * S;
+      const SKIN = '#f5cfa0', DARK = '#2b2b3a', LEG = '#2a2a35';
 
-      function R(gx, gy, gw, gh, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x + gx * S, y + gy * S, gw * S, gh * S);
+      // The two characters: edit these to restyle them
+      const girl = {
+        style: 'long',            // straight hair hanging down
+        skin: '#f8dcc0',          // light
+        hair: '#f3e6a8',          // blonde
+        eyes: '#a9c4de',          // silver-blue
+        robe: '#2e5e3e',          // green
+        scarf: ['#1f4a30', '#c9c9d6'],
+        glasses: false
+      };
+      const boy = {
+        style: 'messy',
+        skin: '#e0ac69',          // tan
+        hair: '#6b4423',          // brown
+        eyes: '#50c878',          // emerald green
+        robe: '#7a1f2b',
+        scarf: ['#5a1420', '#e0b030'],
+        glasses: true
+      };
+
+      // Draw one wizard with its top-left corner at screen x = ox
+      function drawWizard(ox, d) {
+        const R = (gx, gy, gw, gh, color) => {
+          ctx.fillStyle = color;
+          ctx.fillRect(ox + gx * S, y + gy * S, gw * S, gh * S);
+        };
+
+        // Long hair hangs behind the face, so draw it first
+        if (d.style === 'long') R(3, 2, 10, 10, d.hair);
+
+        R(4, 3, 8, 6, SKIN);           // face
+        R(3, 1, 10, 3, d.hair);        // hair on top
+        if (d.style === 'long') R(3, 3, 2, 2, d.hair);   // sleek side part
+        if (d.style === 'messy') {                       // messy spikes
+          R(3, 0, 2, 1, d.hair);
+          R(7, 0, 3, 1, d.hair);
+          R(11, 0, 2, 1, d.hair);
+          R(11, 3, 2, 2, d.hair);
+        }
+
+        R(5, 5, 2, 2, d.eyes);         // eye color
+        R(9, 5, 2, 2, d.eyes);
+        R(6, 6, 1, 1, DARK);           // pupils (both on the right side,
+        R(10, 6, 1, 1, DARK);          // so they look where they're facing)
+        if (d.glasses) {               // round glasses: four thin bars per lens
+          const G = '#3a2a1a';
+          [4, 8].forEach(lx => {
+            R(lx, 4, 4, 1, G);         // top
+            R(lx, 7, 4, 1, G);         // bottom
+            R(lx, 5, 1, 2, G);         // left side
+            R(lx + 3, 5, 1, 2, G);     // right side
+          });
+        }
+        R(7, 8, 2, 1, '#b5535a');      // mouth
+
+        R(3, 9, 10, 7, d.robe);        // robe
+        R(4, 9, 8, 1, d.scarf[0]);     // scarf stripes
+        R(4, 10, 8, 1, d.scarf[1]);
+        R(2, 10, 1, 4, d.robe);        // arms
+        R(13, 10, 1, 4, d.robe);
+
+        R(5, 16, 2, 2, LEG);           // legs and shoes
+        R(9, 16, 2, 2, LEG);
+        R(5, 17, 3, 1, DARK);
+        R(8, 17, 3, 1, DARK);
       }
 
-      // Colors
-      const SKIN = '#f5cfa0', HAIR = '#f3e6a8', DARK = '#2b2b3a';
-      const ROBE = '#2e5e3e', SCARF2 = '#c9c9d6', LEG = '#2a2a35';
-
-      // Head
-      R(4, 3, 8, 6, SKIN);            // face
-      R(3, 1, 10, 3, HAIR);           // hair on top
-      R(3, 3, 2, 2, HAIR);            // side part
-      R(5, 5, 2, 2, DARK);            // left eye
-      R(9, 5, 2, 2, DARK);            // right eye
-      R(7, 8, 2, 1, '#b5535a');       // mouth
-
-      // Body
-      R(3, 9, 10, 7, ROBE);           // robe
-      R(4, 9, 8, 1, ROBE);            // scarf stripe 1
-      R(4, 10, 8, 1, SCARF2);         // scarf stripe 2
-      R(2, 10, 1, 4, ROBE);           // left arm
-      R(13, 10, 1, 4, ROBE);          // right arm
-
-      // Legs and shoes
-      R(5, 16, 2, 2, LEG);
-      R(9, 16, 2, 2, LEG);
-      R(5, 17, 3, 1, DARK);
-      R(8, 17, 3, 1, DARK);
-    </script>
+      drawWizard(100, girl);
+      drawWizard(220, boy);
+</script>
   </body>
 </html>
