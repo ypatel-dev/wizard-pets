@@ -1,8 +1,9 @@
-
 // Created By Yesha Patel
 
 import {
     drawCharacter,
+    loadCharacterArt,
+    DISPLAY_HEIGHT,
     draco,
     harry
 } from './characters.js';
@@ -10,6 +11,7 @@ import {
 import { createMovement } from './animation/movement.js';
 import { createBehavior } from './animation/behavior.js';
 import { startAnimation } from './animation/engine.js';
+import { createDirector, updateDirector } from './animation/interactions.js';
 
 
 // -------------------------
@@ -78,18 +80,19 @@ function renderCharacters() {
 
     for (const character of characters) {
 
-        // Combine appearance, movement, and behavior.
+        // Combine appearance (including loaded art), movement, and behavior.
         const animatedCharacter = {
             ...character.data,
             movement: character.movement,
             behavior: character.behavior
         };
 
-        // Draw character at its current position.
+        // Draw character at its current position,
+        // standing on the bottom edge of the screen.
         drawCharacter(
             ctx,
             character.movement.x,
-            height - 140,
+            height - DISPLAY_HEIGHT,
             animatedCharacter
         );
     }
@@ -107,12 +110,30 @@ window.addEventListener('resize', resizeCanvas);
 // START APPLICATION
 // -------------------------
 
-resizeCanvas();
+let stopAnimation = () => {};
 
-const stopAnimation = startAnimation(
-    characters,
-    renderCharacters
-);
+async function start() {
+    resizeCanvas();
+
+    try {
+        // Wait until every layer image has loaded before animating.
+        await Promise.all(characters.map((c) => loadCharacterArt(c.data)));
+    } catch (error) {
+        console.error('Character art failed to load:', error);
+        return;
+    }
+
+    // The director makes the two characters meet up now and then.
+    const director = createDirector(characters);
+
+    stopAnimation = startAnimation(
+        characters,
+        renderCharacters,
+        (deltaTime) => updateDirector(director, deltaTime, window.innerWidth)
+    );
+}
+
+start();
 
 
 // -------------------------
